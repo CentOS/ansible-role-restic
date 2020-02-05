@@ -1,1 +1,36 @@
 # Defaults tasks for role restic
+
+- name: Ensuring we have tools to unarchive
+  yum:
+    name: 
+      - unzip
+      - bzip2
+    state: installed
+
+- name: Directory to hold restic binaries
+  file:
+    path: /var/lib/restic
+    state: directory
+
+- name: Ensuring we have restic locally
+  get_url:
+    url: "https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2"
+    dest: /var/lib/restic/
+    mode: 0755
+    owner: root
+  register: restic_download
+
+
+- name: Uncompress archive
+  command: "bunzip2 restic_{{ restic_version }}_linux_amd64.bz2"
+  args:
+    chdir: /var/lib/restic
+    creates: "/var/lib/restic/restic_{{ restic_version }}_linux_amd64"
+
+- name: Symlink to current version
+  file:
+    src: "/var/lib/restic/restic_{{ restic_version }}_linux_amd64"
+    dest: /usr/bin/restic
+    state: link
+    mode: 0755
+    

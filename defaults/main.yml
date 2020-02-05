@@ -1,1 +1,4 @@
 # Defaults variables for role restic
+# Restic version to deploy
+restic_version: 0.9.6
+
