@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Common settings coming from Ansible
+# Most are used by restic as ENV variables to know what/where to backup
+export AWS_ACCESS_KEY_ID="{{ restic_aws_access_key_id }}" 
+export AWS_SECRET_ACCESS_KEY="{{ restic_aws_secret_access_key }}"
+export RESTIC_REPOSITORY="{{ restic_repo }}"
+export RESTIC_PASSWORD="{{ restic_repo_password }}"
+
+echo " == Mounting ${RESTIC_REPOSITORY} under /var/lib/restic/mount with fuse ...."
+echo " == When finished, CTRL-C to umount fusemount point"
+
+restic mount /var/lib/restic/mount

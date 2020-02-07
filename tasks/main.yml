@@ -1,16 +1,21 @@
 # Defaults tasks for role restic
 
-- name: Ensuring we have tools to unarchive
+- name: Ensuring we have tools installed
   yum:
     name: 
       - unzip
       - bzip2
+      - fuse
     state: installed
 
 - name: Directory to hold restic binaries
   file:
-    path: /var/lib/restic
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - /var/lib/restic
+    - /var/lib/restic/repo
+    - /var/lib/restic/mount
 
 - name: Ensuring we have restic locally
   get_url:
@@ -33,4 +38,23 @@
     dest: /usr/bin/restic
     state: link
     mode: 0755
-    
+
+- name: Restic Wrappers (wrapstic)
+  template:
+    src: "{{ item }}.j2"
+    dest: "/usr/libexec/centos/{{ item }}"
+    mode: 0750
+    owner: root
+    group: root
+  with_items:
+    - wrapstic
+    - wrapstic-mount
+
+- name: Cron job for wrapstic
+  cron:
+    name: "CentOS wrapstic backup"
+    job: /usr/libexec/centos/wrapstic
+    hour: "{{ wrapstic_cron_hour }}"
+    minute: "{{ wrapstic_cron_minute }}"
+  when: restic_cron
+

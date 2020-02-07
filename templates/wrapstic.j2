@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Common settings coming from Ansible
+# Most are used by restic as ENV variables to know what/where to backup
+export AWS_ACCESS_KEY_ID="{{ restic_aws_access_key_id }}" 
+export AWS_SECRET_ACCESS_KEY="{{ restic_aws_secret_access_key }}"
+export RESTIC_REPOSITORY="{{ restic_repo }}"
+export RESTIC_PASSWORD="{{ restic_repo_password }}"
+logfile="{{ restic_logfile }}"
+lock_file="/var/tmp/wrapstic.lck"
+
+# Functions
+f_log() {
+   echo "[+] $(date +%Y%m%d-%H:%M) wrapstic -> $*" >>$logfile
+}
+
+f_check() {
+  if [ "$?" -ne "0" ] ;then
+    f_log "ERROR, exiting .. check log"
+    /bin/rm ${lock_file}
+    zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k wrapstic.status -o 1 >/dev/null
+    exit 1
+  else
+    zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k wrapstic.status -o 0 >/dev/null
+  fi
+}
+
+
+# Beginning of script
+if [ -e ${lock_file} ] ; then
+  f_log "${lock_file} still there so other sync in progress ..."
+  f_log "Exiting ..."
+  exit
+fi
+
+f_log "=== Starting Wrapstic job ==="
+touch ${lock_file}
+f_check
+
+# Verify if we can reach repo or init it if empty
+restic --quiet snapshots >/dev/null 2>&1
+if [ "$?" -ne "0" ] ;then
+  # Trying to init and exit if failing
+  f_log "Repository ${RESTIC_REPOSITORY} not accessible/initiliazed"
+  f_log "Verifying if we can init or then maybe PASSWORD for repo is incorrect"
+  restic init >>$logfile
+  f_check  
+fi
+
+# Now the backup
+{% for item in restic_folders_list %}
+f_log "" 
+f_log "Backing up {{ item.local_path }}" 
+restic backup {{ item.local_path }} >> $logfile
+f_check
+{% endfor %}
+
+# Removing lock at the end
+f_log "== Wrapstic job finished =="
+f_log ""
+/bin/rm ${lock_file}
