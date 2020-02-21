@@ -14,5 +14,5 @@ restic_folders_list:
 
 # We can use cron, but by default disabled, in case we want to chain other tool and calling restic after
 restic_cron: False
-restic_cron_hour: "1"
-restic_cron_minute: "10"
+wrapstic_cron_hour: "1"
+wrapstic_cron_minute: "10"
