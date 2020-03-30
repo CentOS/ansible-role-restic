@@ -44,7 +44,7 @@
     src: "{{ item }}.j2"
     dest: "/usr/libexec/centos/{{ item }}"
     mode: 0750
-    owner: root
+    owner: "{{ restic_user }}"
     group: root
   with_items:
     - wrapstic
@@ -53,6 +53,7 @@
 - name: Cron job for wrapstic
   cron:
     name: "CentOS wrapstic backup"
+    user: "{{ restic_user }}" 
     job: /usr/libexec/centos/wrapstic
     hour: "{{ wrapstic_cron_hour }}"
     minute: "{{ wrapstic_cron_minute }}"
