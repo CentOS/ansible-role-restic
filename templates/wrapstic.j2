@@ -55,6 +55,14 @@ restic backup {{ item.local_path }} >> $logfile
 f_check
 {% endfor %}
 
+dow=$(date +%A)
+if [ "$dow" = "Sunday" ] ; then
+  f_log "Pruning old restic snapshots from archives"
+  restic forget --keep-last 5 --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune >>$logfile
+  f_log "Restic prune job finished"
+fi
+
+
 # Removing lock at the end
 f_log "== Wrapstic job finished =="
 f_log ""
