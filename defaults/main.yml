@@ -1,6 +1,6 @@
 # Defaults variables for role restic
 # Restic version to deploy
-restic_version: 0.12.0
+restic_version: 0.14.0
 
 restic_aws_access_key_id: # ignore if not using aws
 restic_aws_secret_access_key:  # ignore if not using aws
