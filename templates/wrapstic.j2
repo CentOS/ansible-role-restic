@@ -29,6 +29,7 @@ f_check() {
 # Beginning of script
 if [ -e ${lock_file} ] ; then
   f_log "${lock_file} still there so other sync in progress ..."
+  zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k wrapstic.status -o 1 >/dev/null
   f_log "Exiting ..."
   exit
 fi
@@ -58,7 +59,7 @@ f_check
 dow=$(date +%A)
 if [ "$dow" = "Sunday" ] ; then
   f_log "Pruning old restic snapshots from archives"
-  restic forget --keep-last 5 --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune >>$logfile 2>&1
+  restic forget --keep-last {{ restic_keep_last }} --keep-daily {{ restic_keep_daily }} --keep-weekly {{ restic_keep_weekly }} --keep-monthly {{ restic_keep_monthly }} --keep-yeary {{ restic_keep_yearly }} --prune >>$logfile 2>&1
   f_log "Restic prune job finished"
 fi
 
