@@ -59,7 +59,7 @@ f_check
 dow=$(date +%A)
 if [ "$dow" = "Sunday" ] ; then
   f_log "Pruning old restic snapshots from archives"
-  restic forget --hostname {{ restic_hostname }} --keep-last {{ restic_keep_last }} --keep-daily {{ restic_keep_daily }} --keep-weekly {{ restic_keep_weekly }} --keep-monthly {{ restic_keep_monthly }} --keep-yeary {{ restic_keep_yearly }} --prune >>$logfile 2>&1
+  restic forget --hostname {{ restic_hostname }} --keep-last {{ restic_keep_last }} --keep-daily {{ restic_keep_daily }} --keep-weekly {{ restic_keep_weekly }} --keep-monthly {{ restic_keep_monthly }} --keep-yearly {{ restic_keep_yearly }} --prune >>$logfile 2>&1
   f_log "Restic prune job finished"
 fi
 
