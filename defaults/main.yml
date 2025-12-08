@@ -1,6 +1,6 @@
 # Defaults variables for role restic
 # Restic version to deploy
-restic_version: 0.14.0
+restic_version: 0.18.1
 
 restic_aws_access_key_id: # ignore if not using aws
 restic_aws_secret_access_key:  # ignore if not using aws
@@ -8,6 +8,12 @@ restic_repo: /var/lib/restic/repo # where to backup, can s3 path, etc
 restic_repo_password: ibQeFA6NODRbmBb1Jd # used to init/unlock restic backup repository, use another one of course
 restic_logfile: /var/log/restic.log
 restic_user: root # in case for some nodes we want different user
+# Useful to just use a common vhost for restic
+# Default to hostname but if we have to move a machine and change hostname we can use rewrite
+# restic rewrite --host <old_hostname> --new-host <new_hostname>
+# Using by default setting below to a vhost that doesn't change is better
+restic_hostname: "{{ inventory_hostname }}" 
+
 
 restic_folders_list:
   - name: etc-backup

@@ -52,14 +52,14 @@ fi
 {% for item in restic_folders_list %}
 f_log "" 
 f_log "Backing up {{ item.local_path }}" 
-restic backup {{ item.local_path }} >> $logfile 2>&1
+restic backup --hostname {{ restic_hostname }} {{ item.local_path }} >> $logfile 2>&1
 f_check
 {% endfor %}
 
 dow=$(date +%A)
 if [ "$dow" = "Sunday" ] ; then
   f_log "Pruning old restic snapshots from archives"
-  restic forget --keep-last {{ restic_keep_last }} --keep-daily {{ restic_keep_daily }} --keep-weekly {{ restic_keep_weekly }} --keep-monthly {{ restic_keep_monthly }} --keep-yeary {{ restic_keep_yearly }} --prune >>$logfile 2>&1
+  restic forget --hostname {{ restic_hostname }} --keep-last {{ restic_keep_last }} --keep-daily {{ restic_keep_daily }} --keep-weekly {{ restic_keep_weekly }} --keep-monthly {{ restic_keep_monthly }} --keep-yeary {{ restic_keep_yearly }} --prune >>$logfile 2>&1
   f_log "Restic prune job finished"
 fi
 
