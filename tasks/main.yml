@@ -50,6 +50,9 @@
     - wrapstic
     - wrapstic-mount
 
+  tags:
+    - config
+
 - name: Cron job for wrapstic
   cron:
     name: "CentOS wrapstic backup"

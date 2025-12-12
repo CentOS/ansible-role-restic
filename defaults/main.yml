@@ -14,10 +14,14 @@ restic_user: root # in case for some nodes we want different user
 # Using by default setting below to a vhost that doesn't change is better
 restic_hostname: "{{ inventory_hostname }}" 
 
-
+# We can parse a list of src directories to backup in repo
+# We can (optional) add some restic options (see doc) per source, like exclude or else
 restic_folders_list:
   - name: etc-backup
     local_path: /etc/
+  - name: other
+    local_path: /srv/
+    restic_opts: '--exclude="*.foo" '
 
 # Snapshots management. How many do we want to keep ?
 # see https://restic.readthedocs.io/en/stable/060_forget.html

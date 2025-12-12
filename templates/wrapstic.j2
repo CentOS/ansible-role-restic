@@ -50,9 +50,15 @@ fi
 
 # Now the backup
 {% for item in restic_folders_list %}
+{% if item.restic_opts is defined %}
+# restic_opts are defined in ansible so using it
+restic_opts='{{ item.restic_opts }}'
+{% else %}
+restic_opts=''
+{% endif %}
 f_log "" 
 f_log "Backing up {{ item.local_path }}" 
-restic backup --host {{ restic_hostname }} {{ item.local_path }} >> $logfile 2>&1
+restic backup --host {{ restic_hostname }} {{ item.local_path }} ${restic_opts} >> $logfile 2>&1
 f_check
 {% endfor %}
 
