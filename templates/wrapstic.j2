@@ -52,9 +52,9 @@ fi
 {% for item in restic_folders_list %}
 {% if item.restic_opts is defined %}
 # restic_opts are defined in ansible so using it
-restic_opts='{{ item.restic_opts }}'
+restic_opts="{{ item.restic_opts }}"
 {% else %}
-restic_opts=''
+restic_opts=""
 {% endif %}
 f_log "" 
 f_log "Backing up {{ item.local_path }}" 
