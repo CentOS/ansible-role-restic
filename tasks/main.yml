@@ -18,11 +18,10 @@
     - /var/lib/restic/mount
 
 - name: Ensuring we have restic locally
-  get_url:
-    url: "https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2"
-    dest: /var/lib/restic/
-    mode: 0755
-    owner: root
+  shell:
+    cmd: "curl -L -O https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2 && chmod 755 restic_{{ restic_version }}_linux_amd64.bz2"
+    chdir: /var/lib/restic/
+    creates: "/var/lib/restic/restic_{{ restic_version }}_linux_amd64.bz2"
   register: restic_download
 
 
